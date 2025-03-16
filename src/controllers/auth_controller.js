@@ -28,7 +28,7 @@ const authController = {
         dni,
         firstName,
         lastName,
-        email: email.toLowerCase(),
+        email,
         role,
         active: false,
         uid: userRecord.uid,
@@ -47,18 +47,22 @@ const authController = {
 
   // Login
   async loginUser(req, res) {
-
     // console.log(req.body);
     // res.status(200).send({msg: "ESTAS EN LOGIN..."});
 
     try {
       const { email, password } = req.body;
+      // let { email, password } = req.body;
 
-      // Reescribiendo email
-      email = email.toLowerCase();
+      // Validar email y password
+      if (!email)
+        return res.status(400).send({ msg: "El email es obligatorio!" });
+      if (!password)
+        return res.status(400).send({ msg: "El password es obligatorio!" });
 
-      console.log(email);
-      console.log(password);
+      // Convertir email a minúsculas
+      // email = email.toLowerCase();
+
 
       // Encontrar usuario
       const userSnapshot = await admin
@@ -69,20 +73,15 @@ const authController = {
 
       // Validar al usuario encontrado
       if (userSnapshot.empty) {
-        return res.status(400).json({ error: "Invalid credentials" });
+        return res.status(400).json({ error: "El usuario no existe!" });
       }
 
       // Validar email y password
-      if (!email) res.status(400).send({ msg: "El email es obligatorio!" });
-      if (!password)
-        res.status(400).send({ msg: "El password es obligatorio!" });
-
-      
       const userData = userSnapshot.docs[0].data();
       const isMatch = await bcrypt.compare(password, userData.password);
 
       if (!isMatch) {
-        return res.status(400).json({ error: "Invalid credentials" });
+        return res.status(400).json({ error: "Credenciales inválidas" });
       }
 
       const token = jwt.sign(
@@ -106,7 +105,7 @@ const authController = {
     try {
       const token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      res.json({ valid: true, decoded });
+      res.status(200).json({ valid: true, decoded });
     } catch (error) {
       res.status(401).json({ valid: false, error: "Invalid token" });
     }

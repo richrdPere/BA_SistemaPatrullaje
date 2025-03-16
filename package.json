@@ -11,6 +11,7 @@
   "author": "Richard M. Pereira Chinchero",
   "license": "ISC",
   "dependencies": {
+    "ba_sistemapatrullaje": "file:",
     "bcryptjs": "^3.0.2",
     "body-parse": "^0.1.0",
     "cloudinary": "^2.5.1",
