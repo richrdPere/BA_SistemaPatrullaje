@@ -1,68 +1,90 @@
-const { db } = require("../config/firebase");
+const admin = require("firebase-admin");
 
-// Obtener todos los incidentes
-const getAllIncidents = async (req, res) => {
-  try {
-    const snapshot = await db.collection("incidents").get();
-    const incidents = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    res.status(200).json(incidents);
-  } catch (error) {
-    res.status(500).json({ message: "Error obteniendo incidentes", error });
-  }
-};
+const incidentController = {
+  // Registrar un nuevo incidente
+  async registerIncident(req, res) {
+    try {
+      const { serenoId, type, description, lat, lng, media } = req.body;
 
-// Obtener un incidente por ID
-const getIncidentById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const doc = await db.collection("incidents").doc(id).get();
-    if (!doc.exists) {
-      return res.status(404).json({ message: "Incidente no encontrado" });
+      if (!serenoId || !type || !description || !lat || !lng) {
+        return res.status(400).json({ error: "Todos los campos son obligatorios" });
+      }
+
+      const newIncident = {
+        serenoId,
+        type,
+        description,
+        lat,
+        lng,
+        media: media || [],
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      };
+
+      const docRef = await admin.firestore().collection("incidents").add(newIncident);
+
+      res.status(201).json({ message: "Incidente registrado correctamente", id: docRef.id });
+    } catch (error) {
+      console.error("Error al registrar el incidente:", error);
+      res.status(500).json({ error: error.message });
     }
-    res.status(200).json({ id: doc.id, ...doc.data() });
-  } catch (error) {
-    res.status(500).json({ message: "Error obteniendo incidente", error });
+  },
+
+  // Obtener un incidente por ID
+  async getIncident(req, res) {
+    try {
+      const { incidentId } = req.params;
+
+      if (!incidentId) {
+        return res.status(400).json({ error: "El ID del incidente es obligatorio" });
+      }
+
+      const doc = await admin.firestore().collection("incidents").doc(incidentId).get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Incidente no encontrado" });
+      }
+
+      res.status(200).json(doc.data());
+    } catch (error) {
+      console.error("Error al obtener el incidente:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Obtener todos los incidentes registrados
+  async getAllIncidents(req, res) {
+    try {
+      const snapshot = await admin.firestore().collection("incidents").get();
+      const incidents = [];
+
+      snapshot.forEach(doc => {
+        incidents.push({ id: doc.id, ...doc.data() });
+      });
+
+      res.status(200).json(incidents);
+    } catch (error) {
+      console.error("Error al obtener los incidentes:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Eliminar un incidente por ID
+  async removeIncident(req, res) {
+    try {
+      const { incidentId } = req.params;
+
+      if (!incidentId) {
+        return res.status(400).json({ error: "El ID del incidente es obligatorio" });
+      }
+
+      await admin.firestore().collection("incidents").doc(incidentId).delete();
+
+      res.status(200).json({ message: "Incidente eliminado correctamente" });
+    } catch (error) {
+      console.error("Error al eliminar el incidente:", error);
+      res.status(500).json({ error: error.message });
+    }
   }
 };
 
-// Crear un nuevo incidente
-const createIncident = async (req, res) => {
-  try {
-    const newIncident = req.body;
-    const docRef = await db.collection("incidents").add(newIncident);
-    res.status(201).json({ id: docRef.id, ...newIncident });
-  } catch (error) {
-    res.status(500).json({ message: "Error creando incidente", error });
-  }
-};
-
-// Actualizar un incidente
-const updateIncident = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedData = req.body;
-    await db.collection("incidents").doc(id).update(updatedData);
-    res.status(200).json({ message: "Incidente actualizado correctamente" });
-  } catch (error) {
-    res.status(500).json({ message: "Error actualizando incidente", error });
-  }
-};
-
-// Eliminar un incidente
-const deleteIncident = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await db.collection("incidents").doc(id).delete();
-    res.status(200).json({ message: "Incidente eliminado correctamente" });
-  } catch (error) {
-    res.status(500).json({ message: "Error eliminando incidente", error });
-  }
-};
-
-module.exports = {
-  getAllIncidents,
-  getIncidentById,
-  createIncident,
-  updateIncident,
-  deleteIncident,
-};
+module.exports = incidentController;

@@ -11,6 +11,7 @@
   "author": "Richard M. Pereira Chinchero",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.8.3",
     "ba_sistemapatrullaje": "file:",
     "bcryptjs": "^3.0.2",
     "body-parse": "^0.1.0",
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase-admin": "^13.2.0",
+    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "socket.io": "^4.8.1"

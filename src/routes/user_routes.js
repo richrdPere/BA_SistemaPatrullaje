@@ -10,12 +10,12 @@ router.post("/user", verifyToken, userController.createUser);
 // router.get("/user", verifyToken, userController.getUserById);
 
 // Ruta para obtener un usuario por ID
-router.get("/user/:id", verifyToken, userController.getUserById);
+router.get("/:id", verifyToken, userController.getUserById);
 
 // Ruta para actualizar un usuario
-router.put("/user/:id", verifyToken, userController.updateUser);
+router.put("/:id", verifyToken, userController.updateUser);
 
 // Ruta para eliminar un usuario
-router.delete("/user/:id", [verifyToken, isAdmin], userController.deleteUser);
+router.delete("/:id", [verifyToken, isAdmin], userController.deleteUser);
 
 module.exports = router;

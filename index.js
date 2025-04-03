@@ -30,9 +30,32 @@ io.on("connection", (socket) => {
 // Importar rutas
 const authRoutes = require("./src/routes/auth_routes");
 const userRoutes = require("./src/routes/user_routes");
+const trackingRoutes = require("./src/routes/tracking_routes");
+const incidentRoutes = require("./src/routes/incident_routes");
+const notificationRoutes = require("./src/routes/notification_routes");
+const routeRoutes = require("./src/routes/route_routes");
+const serenoRoutes = require("./src/routes/sereno_routes");
+const monitoringRoutes = require("./src/routes/monitoring_routes");
+const incidentAdminRoutes = require("./src/routes/incidentAdmin_routes");
+const reportRoutes = require("./src/routes/report_routes");
+const integrationRoutes = require("./src/routes/integration_routes");
 
-app.use("/api", authRoutes);
-app.use("/api", userRoutes);
+
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+
+// Routes movil
+app.use("/api/tracking", trackingRoutes);
+app.use("/api/incidents", incidentRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/routes", routeRoutes);
+
+// Routes desk
+app.use("/api/serenos", serenoRoutes);
+app.use("/api/monitoring", monitoringRoutes);
+app.use("/api/admin/incidents", incidentAdminRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/integrations", integrationRoutes);
 
 // Función para probar conexión con Firebase
 async function testFirebase() {

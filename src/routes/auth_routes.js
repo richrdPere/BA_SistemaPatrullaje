@@ -6,10 +6,10 @@ const { verifyToken, isAdmin } = require("../middlewares/auth_middleware");
 const router = express.Router();
 
 // Ruta para registrar un nuevo usuario
-router.post("/auth/register", authController.registerUser);
+router.post("/register", authController.registerUser);
 
 // Ruta para iniciar sesión
-router.post("/auth/login", authController.loginUser);
+router.post("/login", authController.loginUser);
 
 // // Ruta para obtener información del usuario autenticado
 // router.get("/me", verifyToken, authController.getProfile);
