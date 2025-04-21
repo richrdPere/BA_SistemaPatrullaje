@@ -27,18 +27,20 @@ io.on("connection", (socket) => {
   });
 });
 
-// Importar rutas
-const authRoutes = require("./src/routes/auth_routes");
-const userRoutes = require("./src/routes/user_routes");
-const trackingRoutes = require("./src/routes/tracking_routes");
-const incidentRoutes = require("./src/routes/incident_routes");
-const notificationRoutes = require("./src/routes/notification_routes");
-const routeRoutes = require("./src/routes/route_routes");
-const serenoRoutes = require("./src/routes/sereno_routes");
-const monitoringRoutes = require("./src/routes/monitoring_routes");
-const incidentAdminRoutes = require("./src/routes/incidentAdmin_routes");
-const reportRoutes = require("./src/routes/report_routes");
-const integrationRoutes = require("./src/routes/integration_routes");
+// Importar rutas - DESKTOP
+const incidentAdminRoutes = require("./src/routes/desktop/incidentAdmin_routes");
+const integrationRoutes = require("./src/routes/desktop/integration_routes");
+const monitoringRoutes = require("./src/routes/desktop/monitoring_routes");
+const reportRoutes = require("./src/routes/desktop/report_routes");
+const userRoutes = require("./src/routes/desktop/user_routes");
+
+// Importar rutas - MOBILE
+const authRoutes = require("./src/routes/mobile/auth_routes");
+const incidentRoutes = require("./src/routes/mobile/incident_routes");
+const notificationRoutes = require("./src/routes/mobile/notification_routes");
+const routeRoutes = require("./src/routes/mobile/route_routes");
+const serenoRoutes = require("./src/routes/mobile/sereno_routes");
+const trackingRoutes = require("./src/routes/mobile/tracking_routes");
 
 
 app.use("/api/auth", authRoutes);
