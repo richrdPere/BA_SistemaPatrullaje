@@ -4,18 +4,18 @@ const patrolRouteController = require("../../controllers/desktop/routePatrol_con
 const { verifyToken, isAdmin } = require("../../middlewares/auth_middleware");
 
 // Ruta para registrar una nueva ruta de patrullaje
-router.post("/", verifyToken, patrolRouteController.createRoutePatrol);
+router.post("/create_route", verifyToken, patrolRouteController.createRoutePatrol);
 
-// Ruta para obtener todas las rutas de patrullaje
-router.get("/", verifyToken, patrolRouteController.getRoutesPatrol);
-
-// Ruta para obtener una ruta de patrullaje por ID
-router.get("/:id", verifyToken, patrolRouteController.getRoutePatrolById);
+// Ruta para asignar serenos
+router.put("/assign_serenazgos", verifyToken, patrolRouteController.assignSerenazgosToRoute);
 
 // Ruta para actualizar una ruta de patrullaje
-router.put("/:id", verifyToken, patrolRouteController.updateRoutePatrol);
+router.put("/:routeId", verifyToken, patrolRouteController.updateRoute);
 
-// Ruta para eliminar una ruta de patrullaje
-router.delete("/:id", [verifyToken, isAdmin], patrolRouteController.deleteRoutePatrol);
+// Ruta para obtener todas las rutas creadas
+router.get("/", verifyToken, patrolRouteController.getRoutes);
+
+// Ruta para obtener rutas por ID
+router.get("/:id", [verifyToken, isAdmin], patrolRouteController.getRouteById);
 
 module.exports = router;

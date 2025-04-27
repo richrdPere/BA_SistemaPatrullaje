@@ -1,6 +1,6 @@
 const express = require("express");
-const authController = require("../../controllers/mobile/auth_controller");
-const { verifyToken, isAdmin } = require("../../middlewares/auth_middleware");
+const authController = require("../controllers/auth_controller");
+const { verifyToken, isAdmin } = require("../middlewares/auth_middleware");
 
 // Route
 const router = express.Router();

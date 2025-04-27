@@ -26,4 +26,26 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
+// =========================================================
+  // ============== Middleware para verificar si =============
+  // ============ el usuario tiene el rol adecuado ===========
+  // =========================================================
+  // checkRole(allowedRoles) {
+  //   return async (req, res, next) => {
+  //     try {
+  //       const token = req.headers.authorization.split(" ")[1];
+  //       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  //       if (!allowedRoles.includes(decoded.role)) {
+  //         return res.status(403).json({ error: "No tienes permiso para acceder a esta ruta" });
+  //       }
+
+  //       req.user = decoded;
+  //       next();
+  //     } catch (error) {
+  //       res.status(401).json({ error: "Token inválido" });
+  //     }
+  //   };
+  // };
+
 module.exports = { verifyToken, isAdmin };

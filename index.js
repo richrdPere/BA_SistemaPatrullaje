@@ -27,15 +27,19 @@ io.on("connection", (socket) => {
   });
 });
 
+// Importar rutas - GENERALES
+const authRoutes = require("./src/routes/auth_routes");
+const userRoutes = require("./src/routes/user_routes");
+
 // Importar rutas - DESKTOP
 const incidentAdminRoutes = require("./src/routes/desktop/incidentAdmin_routes");
 const integrationRoutes = require("./src/routes/desktop/integration_routes");
 const monitoringRoutes = require("./src/routes/desktop/monitoring_routes");
 const reportRoutes = require("./src/routes/desktop/report_routes");
-const userRoutes = require("./src/routes/desktop/user_routes");
+const Route_Patrol_Routes =require("./src/routes/desktop/routePatrol_routes");
+
 
 // Importar rutas - MOBILE
-const authRoutes = require("./src/routes/mobile/auth_routes");
 const incidentRoutes = require("./src/routes/mobile/incident_routes");
 const notificationRoutes = require("./src/routes/mobile/notification_routes");
 const routeRoutes = require("./src/routes/mobile/route_routes");
@@ -58,6 +62,7 @@ app.use("/api/monitoring", monitoringRoutes);
 app.use("/api/admin/incidents", incidentAdminRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/integrations", integrationRoutes);
+app.use("/api/routes_patrol", Route_Patrol_Routes);
 
 // Función para probar conexión con Firebase
 async function testFirebase() {

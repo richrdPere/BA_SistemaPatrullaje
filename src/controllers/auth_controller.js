@@ -6,26 +6,33 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 const authController = {
-  // Register
+  // ======================================================
+  // ============= Registrar un usuario ===================
+  // ======================================================
   async registerUser(req, res) {
-    //console.log(req.body);
-    //res.status(200).send({msg: "ESTAS EN REGISTER..."});
 
     try {
       const { dni, firstName, lastName, email, password, role } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Validar datos
+      // 1.- Validar datos
       if (!email) res.status(400).send({ msg: "El Email es obligatorio!" });
       if (!password)
-        res.status(400).send({ msg: "El Password es obligatorio!" });
+        res.status(400).send({ msg: "La Contraseña es obligatorio!" });
+      if (!email || !password || !role) {
+        return res.status(400).send({ msg: "Email, Contraseña y Rol son obligatorios!" });
+      }
+      if (role !== "sereno" && role !== "supervisor" && role !== "admin") {
+        return res.status(400).send({ msg: "El rol debe ser uno de: sereno, supervisor, admin." });
+      }
 
-      // Crear documento User para DB
+      // 2.- Crear documento User para DB en Firebase Authentication
       const userRecord = await admin.auth().createUser({
         email,
         password,
       });
 
+      // 3.- Guardar usuario en Firestore
       await admin.firestore().collection("users").doc(userRecord.uid).set({
         dni,
         firstName,
@@ -47,45 +54,46 @@ const authController = {
     }
   },
 
-  // Login
+  // ======================================================
+  // ================== Iniciar sesión ====================
+  // ======================================================
   async loginUser(req, res) {
-    // console.log(req.body);
-    // res.status(200).send({msg: "ESTAS EN LOGIN..."});
 
     try {
       const { email, password } = req.body;
-      // let { email, password } = req.body;
 
-      // Validar email y password
+      // 1.- Validar email y password
       if (!email)
         return res.status(400).send({ msg: "El email es obligatorio!" });
       if (!password)
         return res.status(400).send({ msg: "El password es obligatorio!" });
+      if (!email || !password) {
+        return res.status(400).send({ msg: "El email y el password son obligatorios!" });
+      }
 
-      // Convertir email a minúsculas
-      // email = email.toLowerCase();
-
-
-      // Encontrar usuario
+      // 2.- Encontrar usuario
       const userSnapshot = await admin
         .firestore()
         .collection("users")
         .where("email", "==", email)
         .get();
 
-      // Validar al usuario encontrado
+      // 3.- Validar al usuario encontrado
       if (userSnapshot.empty) {
         return res.status(400).json({ error: "El usuario no existe!" });
       }
 
-      // Validar email y password
+      // 4.- Validar email y password
       const userData = userSnapshot.docs[0].data();
+
+      // 5.- Comparar contraseñas
       const isMatch = await bcrypt.compare(password, userData.password);
 
       if (!isMatch) {
         return res.status(400).json({ error: "Credenciales inválidas" });
       }
 
+      // 6.- Crear token JWT
       const token = jwt.sign(
         { uid: userData.uid, role: userData.role },
         process.env.JWT_SECRET,
@@ -103,6 +111,9 @@ const authController = {
     }
   },
 
+  // ======================================================
+  // ============== Verificar token JWT ===================
+  // ======================================================
   async verifyToken(req, res) {
     try {
       const token = req.headers.authorization.split(" ")[1];
@@ -111,6 +122,28 @@ const authController = {
     } catch (error) {
       res.status(401).json({ valid: false, error: "Invalid token" });
     }
+  },
+
+  // =========================================================
+  // ============== Middleware para verificar si =============
+  // ============ el usuario tiene el rol adecuado ===========
+  // =========================================================
+  checkRole(allowedRoles) {
+    return async (req, res, next) => {
+      try {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (!allowedRoles.includes(decoded.role)) {
+          return res.status(403).json({ error: "No tienes permiso para acceder a esta ruta" });
+        }
+
+        req.user = decoded;
+        next();
+      } catch (error) {
+        res.status(401).json({ error: "Token inválido" });
+      }
+    };
   },
 };
 
