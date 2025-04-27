@@ -10,12 +10,13 @@ router.post("/register", verifyToken, incidentController.registerIncident);
 router.get("/", verifyToken, incidentController.getAllIncidents);
 
 // Ruta para obtener un incidente por ID
-router.get("/:incidentId", verifyToken, incidentController.getIncident);
-
-// Ruta para actualizar un incidente
-// router.put("/:id", verifyToken, incidentController.updateIncident);
+router.get("/:incidentId", verifyToken, incidentController.getIncidentByID);
 
 // Ruta para eliminar un incidente
 router.delete("/:incidentId", [verifyToken, isAdmin], incidentController.removeIncident);
+
+// Ruta para eliminar un incidente
+router.get("/sereno/:serenoId", verifyToken, incidentController.getIncidentsBySereno);
+
 
 module.exports = router;

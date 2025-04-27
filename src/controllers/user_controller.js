@@ -29,7 +29,7 @@ const verifyTokenAndRole = async (req, res, next) => {
 
 const userController = {
   // ===========================================================
-  // ============= Obtener todos los usuarios ==================
+  // 1.- Obtener todos los usuarios 
   // ===========================================================
   async getUsers(req, res) {
     try {
@@ -43,7 +43,7 @@ const userController = {
   },
 
   // ===========================================================
-  // ============= Obtener un usuario por ID ===================
+  // 2.- Obtener un usuario por ID 
   // ===========================================================
   async getUserById(req, res) {
     try {
@@ -59,10 +59,9 @@ const userController = {
     }
   },
 
-  // ===========================================================
-  // ============= Obtener un usuario ==========================
-  // ===== (solo admin o supervisor pueden crear serenos) ======
-  // ===========================================================
+  // ============================================================================
+  // 3.- Crear un usuario (solo admin o supervisor pueden crear serenos)
+  // ============================================================================
   async createUser(req, res) {
     try {
       const { dni, firstName, lastName, email, role, password } = req.body;
@@ -112,7 +111,7 @@ const userController = {
   },
 
   // ===========================================================
-  // ============= Actualizar un usuario =======================
+  // 4.- Actualizar un usuario 
   // ===========================================================
   async updateUser(req, res) {
     try {

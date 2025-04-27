@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const routeController = require("../../controllers/mobile/route_controller");
+const routeController = require("../../controllers/desktop/route_controller");
 
 // Rutas para la gestión de rutas de patrullaje
 router.post("/register", routeController.createRoute);

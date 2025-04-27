@@ -5,11 +5,51 @@ const socketIo = require("socket.io");
 require("dotenv").config();
 const { db } = require("./src/config/firebase"); // Importar Firebase
 
+const setupWebSocket = require("./src/socket/socket");
+
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: { origin: "*" },
+// const io = socketIo(server, {
+//   cors: { origin: "*" },
+//   methods: ["GET", "POST"]
+// });
+const io = setupWebSocket(server);
+
+// Middleware para que los controladores accedan al io
+app.use((req, res, next) => {
+  req.app.set("socketio", io);
+  next();
 });
+
+// const incidentController = require('./src/controllers/mobile/incident_controller');
+
+// Importar rutas - GENERALES
+const authRoutes = require("./src/routes/auth_routes");
+const userRoutes = require("./src/routes/user_routes");
+
+// Importar rutas - DESKTOP
+const Route_Patrol_Routes =require("./src/routes/desktop/routePatrol_routes");
+const Route_assignment_Routes = require("./src/routes/desktop/routeAssignment_routes");
+const routeRoutes = require("./src/routes/desktop/route_routes");
+
+const incidentAdminRoutes = require("./src/routes/desktop/incidentAdmin_routes");
+const integrationRoutes = require("./src/routes/desktop/integration_routes");
+const monitoringRoutes = require("./src/routes/desktop/monitoring_routes");
+const reportRoutes = require("./src/routes/desktop/report_routes");
+
+
+
+
+// Importar rutas - MOBILE
+const incidentRoutes = require("./src/routes/mobile/incident_routes");
+const positionRoutes = require("./src/routes/mobile/position_route");
+
+const notificationRoutes = require("./src/routes/mobile/notification_routes");
+const serenoRoutes = require("./src/routes/mobile/sereno_routes");
+const trackingRoutes = require("./src/routes/mobile/tracking_routes");
+
+// Configurar el socket en el controller
+// incidentController.setSocketInstance(io);
 
 // Configure Static files
 app.use(express.static("src/uploads"));
@@ -20,49 +60,36 @@ app.use(express.json());
 
 // WebSockets
 io.on("connection", (socket) => {
-  console.log("Nuevo cliente conectado:", socket.id);
+  console.log("Cliente de escritorio conectado:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("Cliente desconectado:", socket.id);
+    console.log("Cliente de escritorio desconectado:", socket.id);
   });
 });
 
-// Importar rutas - GENERALES
-const authRoutes = require("./src/routes/auth_routes");
-const userRoutes = require("./src/routes/user_routes");
-
-// Importar rutas - DESKTOP
-const incidentAdminRoutes = require("./src/routes/desktop/incidentAdmin_routes");
-const integrationRoutes = require("./src/routes/desktop/integration_routes");
-const monitoringRoutes = require("./src/routes/desktop/monitoring_routes");
-const reportRoutes = require("./src/routes/desktop/report_routes");
-const Route_Patrol_Routes =require("./src/routes/desktop/routePatrol_routes");
-
-
-// Importar rutas - MOBILE
-const incidentRoutes = require("./src/routes/mobile/incident_routes");
-const notificationRoutes = require("./src/routes/mobile/notification_routes");
-const routeRoutes = require("./src/routes/mobile/route_routes");
-const serenoRoutes = require("./src/routes/mobile/sereno_routes");
-const trackingRoutes = require("./src/routes/mobile/tracking_routes");
-
-
+// ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 
 // Routes movil
+app.use("/api/routes", routeRoutes);
+app.use("/api/positions", positionRoutes);
+
 app.use("/api/tracking", trackingRoutes);
 app.use("/api/incidents", incidentRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/routes", routeRoutes);
+
 
 // Routes desk
+app.use("/api/routes_patrol", Route_Patrol_Routes);
+app.use("/api/routes_assignments", Route_assignment_Routes);
+
 app.use("/api/serenos", serenoRoutes);
 app.use("/api/monitoring", monitoringRoutes);
 app.use("/api/admin/incidents", incidentAdminRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/integrations", integrationRoutes);
-app.use("/api/routes_patrol", Route_Patrol_Routes);
+
 
 // Función para probar conexión con Firebase
 async function testFirebase() {
