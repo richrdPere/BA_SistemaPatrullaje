@@ -60,14 +60,14 @@ const authController = {
   async loginUser(req, res) {
 
     try {
-      const { email, password } = req.body;
+      const { username, password } = req.body;
 
       // 1.- Validar email y password
-      if (!email)
-        return res.status(400).send({ msg: "El email es obligatorio!" });
+      if (!username)
+        return res.status(400).send({ msg: "El username es obligatorio!" });
       if (!password)
         return res.status(400).send({ msg: "El password es obligatorio!" });
-      if (!email || !password) {
+      if (!username || !password) {
         return res.status(400).send({ msg: "El email y el password son obligatorios!" });
       }
 

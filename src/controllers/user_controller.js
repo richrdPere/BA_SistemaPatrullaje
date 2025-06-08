@@ -3,6 +3,7 @@
 const { db } = require("../config/firebase");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 // Middleware para verificar el token JWT y el rol
 const verifyTokenAndRole = async (req, res, next) => {
@@ -60,27 +61,58 @@ const userController = {
   },
 
   // ============================================================================
-  // 3.- Crear un usuario (solo admin o supervisor pueden crear serenos)
+  // 3.- Crear un usuario (solo operador o supervisor pueden crear serenos)
   // ============================================================================
   async createUser(req, res) {
     try {
-      const { dni, firstName, lastName, email, role, password } = req.body;
-      
+      const { dni, firstName, lastName, phone, birthdate, avatar='', address='', distrito='', email, role, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       // Verificar si se pasa el rol correcto
       if (role !== "sereno") {
         return res.status(400).json({ error: "El rol debe ser 'sereno'" });
       }
+      // if (role !== "operador") {
+      //   return res.status(400).json({ error: "El rol debe ser 'operador'" });
+      // }
+
+      // Obtener todos los usuarios para calcular el próximo ID
+      const usersSnapshot = await db.collection("users").get();
+
+      // Buscar el ID más alto
+      let maxNumber = 99; // empezamos en 99 para que el primero sea 100
+      usersSnapshot.forEach(doc => {
+        const userId = doc.id;
+        const match = userId.match(/^USER(\d+)$/);
+        if (match) {
+          const number = parseInt(match[1], 10);
+          if (number > maxNumber) {
+            maxNumber = number;
+          }
+        }
+      });
+
+      const nextIdNumber = maxNumber + 1;
+      const paddedNumber = String(nextIdNumber).padStart(5, '0'); // ejemplo: 00100
+      const id = `USER${paddedNumber}`;
 
       // Si el rol es sereno, la creación de usuarios se limita a admin o supervisor
-      const id = uuidv4();
+      // const id = uuidv4();
       const newUser = {
         id,
         dni,
+        avatar,
         firstName,
         lastName,
+        phone,
+        birthdate,
+        address,
+        distrito,
         email,
+        username,
         role,
-        password,
+        active: false,
+        password: hashedPassword,
         createdAt: new Date().toISOString(),
       };
 
@@ -91,23 +123,6 @@ const userController = {
       console.error("Error al crear el usuario:", error);
       res.status(500).json({ error: "Error al crear el usuario" });
     }
-     /*
-    try {
-      const id = uuidv4();
-      const newUser = {
-        id,
-        ...req.body,
-        createdAt: new Date().toISOString(),
-      };
-
-      await db.collection("users").doc(id).set(newUser);
-
-      res.status(201).json({ message: "Usuario creado con éxito", user: newUser });
-    } catch (error) {
-      console.error("Error al crear el usuario:", error);
-      res.status(500).json({ error: "Error al crear el usuario" });
-    }
-      */
   },
 
   // ===========================================================
