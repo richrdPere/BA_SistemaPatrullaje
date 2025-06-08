@@ -37,9 +37,6 @@ const integrationRoutes = require("./src/routes/desktop/integration_routes");
 const monitoringRoutes = require("./src/routes/desktop/monitoring_routes");
 const reportRoutes = require("./src/routes/desktop/report_routes");
 
-
-
-
 // Importar rutas - MOBILE
 const incidentRoutes = require("./src/routes/mobile/incident_routes");
 const positionRoutes = require("./src/routes/mobile/position_route");

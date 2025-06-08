@@ -75,7 +75,7 @@ const authController = {
       const userSnapshot = await admin
         .firestore()
         .collection("users")
-        .where("email", "==", email)
+        .where("username", "==", username)
         .get();
 
       // 3.- Validar al usuario encontrado
