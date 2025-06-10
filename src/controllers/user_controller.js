@@ -65,7 +65,7 @@ const userController = {
   // ============================================================================
   async createUser(req, res) {
     try {
-      const { dni, firstName, lastName, phone, birthdate, avatar='', address='', distrito='', email, role, password } = req.body;
+      const { dni, firstName, lastName, phone, birthdate, avatar='', address='', distrito='', email, role, username, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Verificar si se pasa el rol correcto
@@ -111,7 +111,7 @@ const userController = {
         email,
         username,
         role,
-        active: false,
+        active: true,
         password: hashedPassword,
         createdAt: new Date().toISOString(),
       };

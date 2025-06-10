@@ -3,6 +3,7 @@
 const admin = require("firebase-admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { db } = require("../config/firebase");
 require("dotenv").config();
 
 const authController = {
@@ -12,37 +13,80 @@ const authController = {
   async registerUser(req, res) {
 
     try {
-      const { dni, firstName, lastName, email, password, role } = req.body;
+      const { dni, firstName, lastName, phone = "", birthdate = "", address = "", distrito = "", email, username, password, role } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // 1.- Validar datos
       if (!email) res.status(400).send({ msg: "El Email es obligatorio!" });
+      if (!username) res.status(400).send({ msg: "El Username es obligatorio!" });
       if (!password)
         res.status(400).send({ msg: "La Contraseña es obligatorio!" });
       if (!email || !password || !role) {
         return res.status(400).send({ msg: "Email, Contraseña y Rol son obligatorios!" });
       }
-      if (role !== "sereno" && role !== "supervisor" && role !== "admin") {
-        return res.status(400).send({ msg: "El rol debe ser uno de: sereno, supervisor, admin." });
+      if (role !== "sereno" && role !== "operador" && role !== "admin") {
+        return res.status(400).send({ msg: "El rol debe ser uno de: sereno, operador, admin." });
       }
 
       // 2.- Crear documento User para DB en Firebase Authentication
       const userRecord = await admin.auth().createUser({
-        email,
+        username,
         password,
       });
 
+      // 3.- Obtener todos los usuarios para calcular el próximo ID
+      const usersSnapshot = await db.collection("users").get();
+
+      // Buscar el ID más alto
+      let maxNumber = 99; // empezamos en 99 para que el primero sea 100
+      usersSnapshot.forEach(doc => {
+        const userId = doc.id;
+        const match = userId.match(/^USER(\d+)$/);
+        if (match) {
+          const number = parseInt(match[1], 10);
+          if (number > maxNumber) {
+            maxNumber = number;
+          }
+        }
+      });
+
+      const nextIdNumber = maxNumber + 1;
+      const paddedNumber = String(nextIdNumber).padStart(5, '0'); // ejemplo: 00100
+      const id = `USER${paddedNumber}`;
+
       // 3.- Guardar usuario en Firestore
-      await admin.firestore().collection("users").doc(userRecord.uid).set({
+      // await admin.firestore().collection("users").doc(userRecord.uid).set({
+      //   dni,
+      //   firstName,
+      //   lastName,
+      //   email,
+      //   username,
+      //   role,
+      //   active: false,
+      //   uid: userRecord.uid,
+      //   password: hashedPassword,
+      // });
+
+      const newUser = {
+        id,
         dni,
+        avatar: '',
         firstName,
         lastName,
+        phone,
+        birthdate,
+        address,
+        distrito,
         email,
+        username,
         role,
-        active: false,
-        uid: userRecord.uid,
+        active: true,
         password: hashedPassword,
-      });
+        createdAt: new Date().toISOString(),
+      };
+
+      await db.collection("users").doc(id).set(newUser);
+
 
       res.status(201).json({
         message: "Usuario registrado exitosamente",
@@ -68,7 +112,7 @@ const authController = {
       if (!password)
         return res.status(400).send({ msg: "El password es obligatorio!" });
       if (!username || !password) {
-        return res.status(400).send({ msg: "El email y el password son obligatorios!" });
+        return res.status(400).send({ msg: "El username y el password son obligatorios!" });
       }
 
       // 2.- Encontrar usuario
