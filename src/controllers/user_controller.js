@@ -69,7 +69,7 @@ const userController = {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Verificar si se pasa el rol correcto
-      if (role !== "sereno") {
+      if (role !== "Sereno") {
         return res.status(400).json({ error: "El rol debe ser 'sereno'" });
       }
       // if (role !== "operador") {
