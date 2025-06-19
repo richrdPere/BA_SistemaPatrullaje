@@ -24,8 +24,8 @@ app.use((req, res, next) => {
 // const incidentController = require('./src/controllers/mobile/incident_controller');
 
 // Importar rutas - GENERALES
-const authRoutes = require("./src/routes/auth_routes");
-const userRoutes = require("./src/routes/user_routes");
+const serenoRoutes = require("./src/routes/serenos_routes");
+const adminRoutes = require("./src/routes/admin_routes");
 
 // Importar rutas - DESKTOP
 const Route_Patrol_Routes =require("./src/routes/desktop/routePatrol_routes");
@@ -40,9 +40,7 @@ const reportRoutes = require("./src/routes/desktop/report_routes");
 // Importar rutas - MOBILE
 const incidentRoutes = require("./src/routes/mobile/incident_routes");
 const positionRoutes = require("./src/routes/mobile/position_route");
-
 const notificationRoutes = require("./src/routes/mobile/notification_routes");
-const serenoRoutes = require("./src/routes/mobile/sereno_routes");
 const trackingRoutes = require("./src/routes/mobile/tracking_routes");
 
 // Configurar el socket en el controller
@@ -65,8 +63,8 @@ io.on("connection", (socket) => {
 });
 
 // ROUTES
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/sereno", serenoRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Routes movil
 app.use("/api/routes", routeRoutes);
