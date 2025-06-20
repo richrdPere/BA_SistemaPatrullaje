@@ -25,40 +25,47 @@ const adminController = {
         return res.status(400).send({ msg: "El username y el password son obligatorios!" });
       }
 
-      // 2.- Encontrar usuario
+      // 2. Determinar si es un correo o un username (DNI)
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+
+      // 3. Buscar al usuario en Firebase
+      const field = isEmail ? "email" : "username";
+
       const userSnapshot = await admin
         .firestore()
         .collection("admins")
-        .where("username", "==", username)
+        .where(field, "==", username)
         .get();
 
-      // 3.- Validar al usuario encontrado
       if (userSnapshot.empty) {
         return res.status(400).json({ error: "El usuario no existe!" });
       }
 
-      // 4.- Validar email y password
       const userData = userSnapshot.docs[0].data();
 
-      // 5.- Comparar contraseñas
+      // 4. Validar contraseña
       const isMatch = await bcrypt.compare(password, userData.password);
-
       if (!isMatch) {
         return res.status(400).json({ error: "Credenciales inválidas" });
       }
 
-      // 6.- Crear token JWT
+      // 5. Generar token
       const token = jwt.sign(
         { uid: userData.uid, role: userData.role },
         process.env.JWT_SECRET,
-        {
-          expiresIn: "7d",
-        }
+        { expiresIn: "7d" }
       );
 
-      res.json({
+      // 6. Devolver respuesta
+      return res.json({
         token,
-        user: { uid: userData.uid, email: userData.email, role: userData.role },
+        user: {
+          uid: userData.uid,
+          email: userData.email,
+          role: userData.role,
+          username: userData.username,
+          name: userData.name,
+        }
       });
     } catch (error) {
       res.status(500).json({ error: error.message });
