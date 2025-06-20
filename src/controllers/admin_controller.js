@@ -60,11 +60,11 @@ const adminController = {
       return res.json({
         token,
         user: {
-          uid: userData.uid,
+          uid: userData.id,
           email: userData.email,
           role: userData.role,
           username: userData.username,
-          name: userData.name,
+          name: userData.firstName,
         }
       });
     } catch (error) {
