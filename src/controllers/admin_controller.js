@@ -41,7 +41,9 @@ const adminController = {
         return res.status(400).json({ error: "El usuario no existe!" });
       }
 
-      const userData = userSnapshot.docs[0].data();
+      const userDoc = userSnapshot.docs[0];
+      const userData = userDoc.data();
+
 
       // 4. Validar contraseña
       const isMatch = await bcrypt.compare(password, userData.password);
@@ -56,16 +58,16 @@ const adminController = {
         { expiresIn: "7d" }
       );
 
+      //  Excluimos el password del objeto de respuesta
+      const { password: _, ...safeUserData } = userData;
+
+      //  Incluimos el ID como campo aparte si no está en los datos
+      safeUserData.id = userDoc.id;
+
       // 6. Devolver respuesta
       return res.json({
         token,
-        user: {
-          uid: userData.id,
-          email: userData.email,
-          role: userData.role,
-          username: userData.username,
-          name: userData.firstName,
-        }
+        user: safeUserData,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

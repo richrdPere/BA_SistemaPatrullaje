@@ -37,7 +37,9 @@ const serenoController = {
       }
 
       // 4.- Validar email y password
-      const userData = userSnapshot.docs[0].data();
+      // const userData = userSnapshot.docs[0].data();
+      const userDoc = userSnapshot.docs[0];
+      const userData = userDoc.data();
 
       // 5.- Comparar contraseñas
       const isMatch = await bcrypt.compare(password, userData.password);
@@ -55,10 +57,18 @@ const serenoController = {
         }
       );
 
+      //  Excluimos el password del objeto de respuesta
+      const { password: _, ...safeUserData } = userData;
+
+      //  Incluimos el ID como campo aparte si no está en los datos
+      safeUserData.id = userDoc.id;
+
       res.json({
         token,
-        user: { uid: userData.uid, email: userData.email, role: userData.role },
+        user: safeUserData,
       });
+
+
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
