@@ -28,6 +28,8 @@ const serenoRoutes = require("./src/routes/serenos_routes");
 const adminRoutes = require("./src/routes/admin_routes");
 
 // Importar rutas - DESKTOP
+const ZonaRoutes = require("./src/routes/desktop/zone_routes");
+
 const Route_Patrol_Routes =require("./src/routes/desktop/routePatrol_routes");
 const Route_assignment_Routes = require("./src/routes/desktop/routeAssignment_routes");
 const routeRoutes = require("./src/routes/desktop/route_routes");
@@ -76,6 +78,10 @@ app.use("/api/notifications", notificationRoutes);
 
 
 // Routes desk
+app.use("/api/zonas", ZonaRoutes);
+
+
+
 app.use("/api/routes_patrol", Route_Patrol_Routes);
 app.use("/api/routes_assignments", Route_assignment_Routes);
 
