@@ -29,10 +29,11 @@ const adminRoutes = require("./src/routes/admin_routes");
 
 // Importar rutas - DESKTOP
 const ZonaRoutes = require("./src/routes/desktop/zone_routes");
+const AsignacionRutaRoutes = require("./src/routes/desktop/asignacionRuta_routes");
+
 
 const Route_Patrol_Routes =require("./src/routes/desktop/routePatrol_routes");
-const Route_assignment_Routes = require("./src/routes/desktop/routeAssignment_routes");
-const routeRoutes = require("./src/routes/desktop/route_routes");
+//const routeRoutes = require("./src/routes/desktop/route_routes");
 
 const incidentAdminRoutes = require("./src/routes/desktop/incidentAdmin_routes");
 const integrationRoutes = require("./src/routes/desktop/integration_routes");
@@ -69,7 +70,7 @@ app.use("/api/sereno", serenoRoutes);
 app.use("/api/admin", adminRoutes);
 
 // Routes movil
-app.use("/api/routes", routeRoutes);
+//app.use("/api/routes", routeRoutes);
 app.use("/api/positions", positionRoutes);
 
 app.use("/api/tracking", trackingRoutes);
@@ -79,12 +80,10 @@ app.use("/api/notifications", notificationRoutes);
 
 // Routes desk
 app.use("/api/zonas", ZonaRoutes);
-
+app.use("/api/asignaciones", AsignacionRutaRoutes);
 
 
 app.use("/api/routes_patrol", Route_Patrol_Routes);
-app.use("/api/routes_assignments", Route_assignment_Routes);
-
 app.use("/api/serenos", serenoRoutes);
 app.use("/api/monitoring", monitoringRoutes);
 app.use("/api/admin/incidents", incidentAdminRoutes);

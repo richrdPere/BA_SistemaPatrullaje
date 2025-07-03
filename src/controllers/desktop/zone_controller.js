@@ -1,4 +1,3 @@
-const Zone = require("../../models/zones_model");
 const { db } = require("../../config/firebase");
 const admin = require("firebase-admin");
 

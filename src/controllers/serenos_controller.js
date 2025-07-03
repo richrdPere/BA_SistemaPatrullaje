@@ -138,7 +138,7 @@ const serenoController = {
         email,
         username,
         role,
-        estado: true,
+        estado: 'Disponible',
         active: true,
         password: hashedPassword,
         createdAt: new Date().toISOString(),
