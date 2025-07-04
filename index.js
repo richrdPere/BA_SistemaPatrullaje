@@ -42,6 +42,8 @@ const reportRoutes = require("./src/routes/desktop/report_routes");
 
 // Importar rutas - MOBILE
 const incidentRoutes = require("./src/routes/mobile/incident_routes");
+
+
 const positionRoutes = require("./src/routes/mobile/position_route");
 const notificationRoutes = require("./src/routes/mobile/notification_routes");
 const trackingRoutes = require("./src/routes/mobile/tracking_routes");
@@ -71,10 +73,12 @@ app.use("/api/admin", adminRoutes);
 
 // Routes movil
 //app.use("/api/routes", routeRoutes);
-app.use("/api/positions", positionRoutes);
+app.use("/api/incidentes", incidentRoutes);
 
+
+// Por realizar
+app.use("/api/positions", positionRoutes);
 app.use("/api/tracking", trackingRoutes);
-app.use("/api/incidents", incidentRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 
@@ -83,6 +87,7 @@ app.use("/api/zonas", ZonaRoutes);
 app.use("/api/asignaciones", AsignacionRutaRoutes);
 
 
+// Por realizar
 app.use("/api/routes_patrol", Route_Patrol_Routes);
 app.use("/api/serenos", serenoRoutes);
 app.use("/api/monitoring", monitoringRoutes);

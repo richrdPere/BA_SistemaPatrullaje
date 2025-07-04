@@ -225,6 +225,29 @@ const serenoController = {
       res.status(500).json({ error: "Error al obtener los serenos" });
     }
   },
+
+  // ===========================================================
+  // 7.- Desactivar un sereno
+  // ===========================================================
+  async desactivarSereno(req, res) {
+    const { id } = req.params;
+
+    try {
+      const serenoRef = db.collection('serenos').doc(id);
+      const doc = await serenoRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: 'El sereno no existe' });
+      }
+
+      await serenoRef.update({ active: false });
+
+      return res.status(200).json({ message: 'Sereno desactivado correctamente' });
+    } catch (error) {
+      console.error('Error al desactivar sereno:', error);
+      return res.status(500).json({ error: 'Error interno al desactivar el sereno' });
+    }
+  }
 };
 
 module.exports = serenoController;

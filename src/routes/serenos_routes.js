@@ -21,4 +21,7 @@ router.put("/:id", verifyToken, serenoController.actualizar_sereno);
 // 6.- Eliminar un sereno
 router.delete("/:id", [verifyToken, isAdmin], serenoController.eliminar_sereno);
 
+// 7.- Desactivar un sereno
+router.patch("/:id", [verifyToken, isAdmin], serenoController.desactivarSereno);
+
 module.exports = router;

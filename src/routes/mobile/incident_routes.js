@@ -3,20 +3,25 @@ const router = express.Router();
 const incidentController = require("../../controllers/mobile/incident_controller");
 const { verifyToken, isAdmin } = require("../../middlewares/auth_middleware");
 
-// Ruta para registrar un nuevo incidente
-router.post("/register", verifyToken, incidentController.registerIncident);
+// 1. Registrar incidente
+router.post('/', verifyToken, incidentController.registerIncident);
 
-// Ruta para obtener todos los incidentes
-router.get("/", verifyToken, incidentController.getAllIncidents);
+// 2. Obtener todos los incidentes
+router.get('/', verifyToken, incidentController.getAllIncidents);
 
-// Ruta para obtener un incidente por ID
-router.get("/:incidentId", verifyToken, incidentController.getIncidentByID);
+//  3. Filtrar incidentes
+router.get('/filtrar', verifyToken, incidentController.filterIncidents);
 
-// Ruta para eliminar un incidente
-router.delete("/:incidentId", [verifyToken, isAdmin], incidentController.removeIncident);
+//  4. Incidentes por sereno
+router.get('/sereno/:serenoId', verifyToken, incidentController.getIncidentsBySereno);
 
-// Ruta para eliminar un incidente
-router.get("/sereno/:serenoId", verifyToken, incidentController.getIncidentsBySereno);
+//  5. Actualizar estado, tipo o prioridad
+router.patch('/:incidentId/actualizar', verifyToken, incidentController.updateIncidentFields);
 
+//  6. Obtener incidente por ID
+router.get('/:incidentId', verifyToken, incidentController.getIncidentByID);
+
+//  7. Eliminar incidente
+router.delete('/:incidentId', verifyToken, incidentController.removeIncident);
 
 module.exports = router;
