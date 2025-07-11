@@ -91,7 +91,7 @@ const vehicleController = {
         ...doc.data()
       }));
 
-      res.status(200).json({ vehicles });
+      res.status(200).json(vehicles);
 
     } catch (error) {
       console.error("Error al obtener vehículos:", error);

@@ -76,7 +76,7 @@ const OperacionesConjuntoController = {
         ...doc.data()
       }));
 
-      res.status(200).json({ operaciones });
+      res.status(200).json(operaciones);
 
     } catch (error) {
       console.error("Error al obtener operaciones:", error);
