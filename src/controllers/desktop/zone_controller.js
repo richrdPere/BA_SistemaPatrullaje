@@ -31,21 +31,26 @@ const zoneController = {
       }
 
       //  Obtener el último ID generado (ZONA100, ZONA101, ...)
-      const zonasSnapshot = await db.collection('zonas').orderBy('customId', 'desc').limit(1).get();
+      const zonasSnapshot = await db.collection('zonas').get();
 
-      let nextIdNumber = 100;
-      if (!zonasSnapshot.empty) {
-        const lastId = zonasSnapshot.docs[0].data().customId;
-        const match = lastId.match(/ZONA(\d+)/);
+      // Buscar el ID más alto
+      let maxNumber = 99;
+
+      zonasSnapshot.forEach(doc => {
+        const zonaId = doc.id;
+        const match = zonaId.match(/^ZONA(\d+)$/);
         if (match) {
-          nextIdNumber = parseInt(match[1]) + 1;
+          const number = parseInt(match[1], 10);
+          if (number > maxNumber) {
+            maxNumber = number;
+          }
         }
-      }
+      });
 
       // Generar el nuevo ID con ceros a la izquierda (ej. ZONA00100)
-      const paddedId = String(nextIdNumber).padStart(5, '0');
-      const id = `ZONA${paddedId}`;
-      // const newCustomId = `ZONA${nextIdNumber}`;
+      const nextIdNumber = maxNumber + 1;
+      const paddedNumber = String(nextIdNumber).padStart(5, '0');
+      const id = `ZONA${paddedNumber}`;
 
       //  Estructura de zona
       const newZone = {
@@ -58,12 +63,11 @@ const zoneController = {
       };
 
       //  Guardar en Firebase
-      const docRef = await db.collection('zonas').add(newZone);
-      const savedZone = await docRef.get();
+      await db.collection('zonas').add(newZone);
 
       res.status(201).json({
         message: 'Zona de patrullaje creada correctamente',
-        zone: { id: docRef.id, ...savedZone.data() }
+        zone: newZone
       });
 
 
@@ -78,7 +82,7 @@ const zoneController = {
   // ===========================================================
   async getAllZones(req, res) {
     try {
-      const snapshot = await db.collection('zonas').orderBy('customId', 'asc').get();
+      const snapshot = await db.collection('zonas').orderBy('id', 'asc').get();
 
       const zonas = snapshot.docs.map(doc => ({
         id: doc.id,
