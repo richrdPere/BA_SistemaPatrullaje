@@ -63,7 +63,7 @@ const zoneController = {
       };
 
       //  Guardar en Firebase
-      await db.collection('zonas').add(newZone);
+      await db.collection('zonas').doc(id).set(newZone);
 
       res.status(201).json({
         message: 'Zona de patrullaje creada correctamente',
