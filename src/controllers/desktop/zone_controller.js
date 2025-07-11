@@ -7,11 +7,17 @@ const zoneController = {
   // ===========================================================
   async createZone(req, res) {
     try {
-      const { name, description, coordinates } = req.body;
+      const { name, description, coordinates, riesgo } = req.body;
 
       //  Validación básica
       if (!name || !coordinates || !Array.isArray(coordinates)) {
         return res.status(400).json({ message: 'Faltan campos requeridos: name, coordinates' });
+      }
+
+      // Validar campo riesgo
+      const valoresPermitidos = ['Alto', 'Medio', 'Bajo'];
+      if (!valoresPermitidos.includes(riesgo)) {
+        return res.status(400).json({ message: "El campo 'riesgo' debe ser: 'Alto', 'Medio' o 'Bajo'." });
       }
 
       //  Verificar si ya existe una zona con el mismo nombre
@@ -36,14 +42,18 @@ const zoneController = {
         }
       }
 
-      const newCustomId = `ZONA${nextIdNumber}`;
+      // Generar el nuevo ID con ceros a la izquierda (ej. ZONA00100)
+      const paddedId = String(nextIdNumber).padStart(5, '0');
+      const id = `ZONA${paddedId}`;
+      // const newCustomId = `ZONA${nextIdNumber}`;
 
       //  Estructura de zona
       const newZone = {
-        customId: newCustomId,
+        id,
         name,
         description: description || '',
         coordinates,
+        riesgo,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       };
 
@@ -108,7 +118,7 @@ const zoneController = {
   },
 
   // ===========================================================
-  // 3.- Actualizar una zona
+  // 4.- Actualizar una zona
   // ===========================================================
   async updateZone(req, res) {
     try {
@@ -147,7 +157,7 @@ const zoneController = {
   },
 
   // ===========================================================
-  // 4.- Eliminar una zona
+  // 5.- Eliminar una zona
   // ===========================================================
   async deleteZone(req, res) {
     try {
