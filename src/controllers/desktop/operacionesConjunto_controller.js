@@ -9,7 +9,7 @@ const OperacionesConjuntoController = {
   // ===========================================================
   async createJointOperation(req, res) {
     try {
-      const { actividad, descripcion, fecha, hora, nombreEntidad } = req.body;
+      const { actividad, descripcion, fecha, hora, lugar, nombreEntidad } = req.body;
 
       // Validación básica
       if (!actividad || !descripcion || !fecha || !hora || !nombreEntidad) {
@@ -44,6 +44,7 @@ const OperacionesConjuntoController = {
         descripcion,
         fecha,
         hora,
+        lugar,
         nombreEntidad,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       };
