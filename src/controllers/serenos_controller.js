@@ -149,7 +149,7 @@ const serenoController = {
       res.status(201).json({ message: "Sereno creado con éxito", user: newSereno });
     } catch (error) {
       console.error("Error al crear al Sereno:", error);
-      res.status(500).json({ error: "Error al crear al Sereno" });
+      res.status(500).json({ error: "Error al crear al Sereno", message: error });
     }
   },
 
