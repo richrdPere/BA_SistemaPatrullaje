@@ -79,7 +79,7 @@ const serenoController = {
   // ============================================================================
   async registro_sereno(req, res) {
     try {
-      const { dni, firstName, lastName, phone = "", birthdate = '', avatar = '', address = '', distrito = '', email, role, username, password } = req.body;
+      const { firstName, lastName, dni, phone = "", email, username, password, role, birthdate = '', avatar = '', address = '', distrito = '' } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Verificar si se pasa el rol correcto
